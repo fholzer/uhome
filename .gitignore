@@ -24,5 +24,8 @@ _autosave-*
 *.xml
 *.csv
 
+before
+fp-lib-table
+
 
 # End of https://www.gitignore.io/api/kicad
