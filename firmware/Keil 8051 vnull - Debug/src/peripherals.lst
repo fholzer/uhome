@@ -1,0 +1,254 @@
+C51 COMPILER V9.53.0.0   PERIPHERALS                                                       01/14/2018 18:47:25 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE PERIPHERALS
+OBJECT MODULE PLACED IN .\src/peripherals.OBJ
+COMPILER INVOKED BY: Z:\home\alex\tools\SimplicityStudio_v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe /home/alex/S
+                    -implicityStudio/v4_workspace/EFM8SB10F8G-A-QFN20/src/peripherals.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL
+                    -(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(/home/alex/SimplicityStudio/v4_w
+                    -orkspace/EFM8SB10F8G-A-QFN20/inc;/home/alex/tools/SimplicityStudio_v4/developer/sdks/8051/v4.0.9//Device/shared/si8051Ba
+                    -se;/home/alex/tools/SimplicityStudio_v4/developer/sdks/8051/v4.0.9//Device/shared/si8051base;/home/alex/tools/Simplicity
+                    -Studio_v4/developer/sdks/8051/v4.0.9//Device/EFM8SB1/inc;/home/alex/tools/SimplicityStudio_v4/developer/sdks/8051/v4.0.9
+                    -//Device/EFM8SB1/peripheral_driver/inc) PRINT(.\src/peripherals.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src/per
+                    -ipherals.OBJ)
+
+line level    source
+
+   1          #include <peripherals.h>
+   2          #include <smb_0.h>
+   3          
+   4          static volatile uint8_t command_complete;
+   5          
+   6          uint8_t i2c_response[3];
+   7          
+   8          
+   9          void si7006_measure(void) {
+  10   1              /*command_complete = 0;
+  11   1              i2c_data[0] = SI7006_CMD_MEAS_HUM_HOLD;
+  12   1              SMB0_transfer(SI7006_ADDR, i2c_data, i2c_response, 1, 0);
+  13   1              while(!command_complete);*/
+  14   1      }
+  15          
+  16          uint16_t si7006_read_temp(void) {
+  17   1              uint8_t i2c_data[3];
+  18   1      
+  19   1              command_complete = 0;
+  20   1              i2c_data[0] = SI7006_CMD_MEAS_TEMP_HOLD;
+  21   1              i2c_data[1] = SI7006_ADDR;
+  22   1              i2c_data[2] = SI7006_ADDR;
+  23   1      
+  24   1              SMB0_transfer(SI7006_ADDR, i2c_data, i2c_response, 3, 0);
+  25   1              while(!command_complete);
+  26   1      
+  27   1              command_complete = 0;
+  28   1              SMB0_transfer(SI7006_ADDR, NULL, i2c_response, 0, 2);
+  29   1              while(!command_complete);
+  30   1      
+  31   1              return (i2c_response[0]) | (i2c_response[1]<<8);
+  32   1      }
+  33          
+  34          uint16_t si7006_read_hum(void) {
+  35   1              uint8_t i2c_data[3];
+  36   1      
+  37   1              command_complete = 0;
+  38   1              i2c_data[0] = SI7006_CMD_MEAS_HUM_HOLD;
+  39   1              i2c_data[1] = SI7006_ADDR;
+  40   1              i2c_data[2] = SI7006_ADDR;
+  41   1      
+  42   1              SMB0_transfer(SI7006_ADDR, i2c_data, i2c_response, 3, 0);
+  43   1              while(!command_complete);
+  44   1      
+  45   1              command_complete = 0;
+  46   1              SMB0_transfer(SI7006_ADDR, NULL, i2c_response, 0, 2);
+  47   1              while(!command_complete);
+  48   1      
+  49   1              return (i2c_response[0]) | (i2c_response[1]<<8);
+C51 COMPILER V9.53.0.0   PERIPHERALS                                                       01/14/2018 18:47:25 PAGE 2   
+
+  50   1      }
+  51          
+  52          void si7055_measure(void) {
+  53   1              uint8_t i2c_data[3];
+  54   1      
+  55   1              command_complete = 0;
+  56   1              i2c_data[0] = SI7055_CMD_MEAS_TEMP_HOLD;
+  57   1              i2c_data[1] = SI7055_ADDR;
+  58   1              i2c_data[2] = SI7055_ADDR;
+  59   1              SMB0_transfer(SI7055_ADDR, i2c_data, i2c_response, 3, 0);
+  60   1              while(!command_complete);
+  61   1      }
+  62          
+  63          uint16_t si7055_read(void) {
+  64   1              command_complete = 0;
+  65   1              SMB0_transfer(SI7055_ADDR, NULL, i2c_response, 0, 2);
+  66   1              while(!command_complete);
+  67   1      
+  68   1              return (i2c_response[0]) | (i2c_response[1]<<8);
+  69   1      }
+  70          
+  71          void si4012_set_data(uint8_t SI_SEG_XDATA *buf, uint8_t len) {
+  72   1              uint8_t i2c_data[80];
+  73   1      
+  74   1              uint8_t SI_SEG_XDATA i = 1;
+  75   1              uint8_t SI_SEG_XDATA b = 0;
+  76   1              uint8_t SI_SEG_XDATA id = 0;
+  77   1      
+  78   1              i2c_data[0] = SI4012_CMD_INIT_FIFO;
+  79   1      
+  80   1              for (id = 0; id < len; id++) {
+  81   2                      uint8_t dc = buf[id];
+  82   2      
+  83   2                      for (b = 8; b > 0; b--) {
+  84   3                              // 10000000 for 0, 11110000 for 1
+  85   3                              uint8_t SI_SEG_XDATA d = 0xC0;
+  86   3                              if (dc & (1<<(b-1))) {
+  87   4                                      d |= 0xFC;
+  88   4                              }
+  89   3      
+  90   3                              i2c_data[i] = d;
+  91   3                              i++;
+  92   3                      }
+  93   2              }
+  94   1      
+  95   1              si4012_request(i2c_data, 1+len*8, 1);
+  96   1      }
+  97          
+  98          void si4012_tx(void) {
+  99   1              uint8_t i2c_data[6];
+ 100   1      
+ 101   1              i2c_data[0] = SI4012_CMD_TX_START;
+ 102   1              i2c_data[1] = 0;
+ 103   1              i2c_data[2] = 255;
+ 104   1              i2c_data[3] = 0;
+ 105   1              i2c_data[4] = 0;
+ 106   1              i2c_data[5] = 0;
+ 107   1      
+ 108   1              si4012_request(i2c_data, 6, 2);
+ 109   1      }
+ 110          
+ 111          void si4012_tx_shutdown(void) {
+ 112   1              uint8_t i2c_data[6];
+C51 COMPILER V9.53.0.0   PERIPHERALS                                                       01/14/2018 18:47:25 PAGE 3   
+
+ 113   1      
+ 114   1              i2c_data[0] = SI4012_CMD_TX_START;
+ 115   1              i2c_data[1] = 0;
+ 116   1              i2c_data[2] = 255;
+ 117   1              i2c_data[3] = 1; // goto shutdown after TX
+ 118   1              i2c_data[4] = 0;
+ 119   1              i2c_data[5] = 0;
+ 120   1      
+ 121   1              si4012_request(i2c_data, 6, 2);
+ 122   1      
+ 123   1              i2c_data[0] = SI4012_CMD_CHANGE_STATE;
+ 124   1              i2c_data[1] = 1;
+ 125   1              i2c_data[2] = 0;
+ 126   1      
+ 127   1              si4012_request(i2c_data, 3, 1);
+ 128   1      }
+ 129          
+ 130          uint16_t si4012_get_battery(void) {
+ 131   1              uint8_t i2c_data[3];
+ 132   1      
+ 133   1              i2c_data[0] = SI4012_CMD_GET_BAT_STATUS;
+ 134   1              i2c_data[1] = 0;
+ 135   1      
+ 136   1              si4012_request(i2c_data, 2, 3);
+ 137   1      
+ 138   1              return i2c_response[2]|(i2c_response[1]<<8);
+ 139   1      }
+ 140          
+ 141          void si4012_init(void) {
+ 142   1              uint8_t i2c_data[5];
+ 143   1      
+ 144   1              i2c_data[0] = SI4012_CMD_SET_PROPERTY;
+ 145   1              i2c_data[1] = SI4012_PROPERTY_LED_INTENSITY;
+ 146   1              i2c_data[2] = 1;
+ 147   1              si4012_request(i2c_data, 3, 1);
+ 148   1      
+ 149   1              i2c_data[0] = SI4012_CMD_SET_PROPERTY;
+ 150   1              i2c_data[1] = SI4012_PROPERTY_PA_CONFIG;
+ 151   1              i2c_data[2] = 0xdd;
+ 152   1              i2c_data[3] = 0xc7;
+ 153   1              i2c_data[4] = 0xc8;
+ 154   1              si4012_request(i2c_data, 5, 1);
+ 155   1      
+ 156   1              i2c_data[0] = SI4012_CMD_SET_PROPERTY;
+ 157   1              i2c_data[1] = SI4012_PROPERTY_MODULATION_FSKDEV;
+ 158   1              i2c_data[2] = 0; // OOK
+ 159   1              i2c_data[3] = 0x0;
+ 160   1              si4012_request(i2c_data, 4, 1);
+ 161   1      
+ 162   1              i2c_data[0] = SI4012_CMD_SET_PROPERTY;
+ 163   1              i2c_data[1] = SI4012_PROPERTY_BITRATE_CONFIG;
+ 164   1              i2c_data[2] = 0x00;
+ 165   1              i2c_data[3] = 0x14;
+ 166   1              i2c_data[4] = 0x01;
+ 167   1              si4012_request(i2c_data, 5, 1);
+ 168   1      }
+ 169          
+ 170          void si4012_led(uint8_t state) {
+ 171   1              uint8_t i2c_data[2];
+ 172   1      
+ 173   1              i2c_data[0] = SI4012_CMD_LED_CTRL;
+ 174   1              i2c_data[1] = state;
+ 175   1      
+C51 COMPILER V9.53.0.0   PERIPHERALS                                                       01/14/2018 18:47:25 PAGE 4   
+
+ 176   1              si4012_request(i2c_data, 2, 1);
+ 177   1      }
+ 178          
+ 179          void si4012_change_state(void) {
+ 180   1              uint8_t i2c_data[3];
+ 181   1      
+ 182   1              i2c_data[0] = SI4012_CMD_GETREV;
+ 183   1              si4012_request(i2c_data, 1, 0);
+ 184   1      
+ 185   1              i2c_data[0] = SI4012_CMD_CHANGE_STATE;
+ 186   1              i2c_data[1] = 0;
+ 187   1              i2c_data[2] = 0;
+ 188   1      
+ 189   1              si4012_request(i2c_data, 3, 1);
+ 190   1      }
+ 191          
+ 192          void si4012_request (uint8_t* buf, uint8_t len, uint8_t rxlen) {
+ 193   1              command_complete = 0;
+ 194   1              SMB0_transfer(SI4012_ADDR, buf, i2c_response, len, 0);
+ 195   1              while(!command_complete);
+ 196   1      
+ 197   1              command_complete = 0;
+ 198   1              SMB0_transfer(SI4012_ADDR, buf, i2c_response, 0, rxlen);
+ 199   1              while(!command_complete);
+ 200   1      }
+ 201          
+ 202          void SMB0_transferCompleteCb() {
+ 203   1              command_complete = 1;
+ 204   1      }
+ 205          
+ 206          void SMB0_commandReceivedCb() {
+ 207   1      }
+ 208          
+ 209          void SMB0_errorCb (SMB0_TransferError_t error) {
+ 210   1              SMB0_abortTransfer();
+ 211   1              command_complete = 1;
+ 212   1      }
+*** WARNING C280 IN LINE 209 OF /home/alex/SimplicityStudio/v4_workspace/EFM8SB10F8G-A-QFN20/src/peripherals.c: 'error':
+             - unreferenced local variable
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    648    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       4
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4     122
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

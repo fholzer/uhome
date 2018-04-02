@@ -1,0 +1,9 @@
+"./lib/efm8sb1/peripheralDrivers/src/pwr.OBJ",
+"./lib/efm8sb1/peripheralDrivers/src/smb_0.OBJ",
+"./src/EFM8SB10F8G-A-QFN20_main.OBJ",
+"./src/InitDevice.OBJ",
+"./src/Interrupts.OBJ",
+"./src/SmaRTClock.OBJ",
+"./src/peripherals.OBJ",
+"./src/power.OBJ"
+TO "EFM8SB10F8G-A-QFN20.OMF.CRBUILD" REMOVEUNUSED PRINT(.\EFM8SB10F8G-A-QFN20.m51) PAGEWIDTH (120) PAGELENGTH (65) CLASSES( CODE(C:0x0 - C:0x1ffe), CONST(C:0x0 - C:0x1ffe), ECODE(C:0x0 - C:0x1ffe), HCONST(C:0x0 - C:0x1ffe), XDATA(X:0x0 - X:0xff), HDATA(X:0x0 - X:0xff))
