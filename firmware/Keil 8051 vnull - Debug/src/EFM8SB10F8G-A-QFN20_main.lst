@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   EFM8SB10F8G_A_QFN20_MAIN                                          01/14/2018 19:16:25 PAGE 1   
+C51 COMPILER V9.53.0.0   EFM8SB10F8G_A_QFN20_MAIN                                          04/10/2018 00:36:51 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE EFM8SB10F8G_A_QFN20_MAIN
@@ -36,7 +36,7 @@ line level    source
   20          // $[Generated Includes]
   21          // [Generated Includes]$
   22          
-  23          #define UHOME_ID 0x09
+  23          #define UHOME_ID 0xA0
   24          
   25          //#define UHOME_TEMP
   26          #define UHOME_HUM
@@ -62,166 +62,189 @@ line level    source
               #define UHOME_TX_DELAY 100000
               #endif
   48          
-  49          uint32_t SI_SEG_XDATA delayi;
-C51 COMPILER V9.53.0.0   EFM8SB10F8G_A_QFN20_MAIN                                          01/14/2018 19:16:25 PAGE 2   
+  49          #define CRC_POLY 0xb1
+C51 COMPILER V9.53.0.0   EFM8SB10F8G_A_QFN20_MAIN                                          04/10/2018 00:36:51 PAGE 2   
 
-  50          uint8_t SI_SEG_XDATA dbuf[10];
-  51          uint8_t SI_SEG_XDATA state = 0;
-  52          
-  53          SI_SBIT (SI4012_SDN, SFR_P1, 0);
-  54          SI_SBIT (SI4012_IRQ, SFR_P0, 7);
-  55          SI_SBIT (SDA, SFR_P0, 0);
-  56          SI_SBIT (SCL, SFR_P0, 1);
-  57          
-  58          //-----------------------------------------------------------------------------
-  59          // SiLabs_Startup() Routine
-  60          // ----------------------------------------------------------------------------
-  61          // This function is called immediately after reset, before the initialization
-  62          // code is run in SILABS_STARTUP.A51 (which runs before main() ). This is a
-  63          // useful place to disable the watchdog timer, which is enable by default
-  64          // and may trigger before main() in some instances.
-  65          //-----------------------------------------------------------------------------
-  66          void SiLabs_Startup(void) {
-  67   1      
-  68   1      }
-  69          
-  70          //-----------------------------------------------------------------------------
-  71          // main() Routine
-  72          // ----------------------------------------------------------------------------
-  73          int main(void) {
-  74   1              uint16_t SI_SEG_XDATA
-  75   1              temp, bat;
+  50          
+  51          uint32_t SI_SEG_XDATA delayi;
+  52          uint8_t SI_SEG_XDATA dbuf[11];
+  53          uint8_t SI_SEG_XDATA state = 0;
+  54          
+  55          SI_SBIT (SI4012_SDN, SFR_P1, 0);
+  56          SI_SBIT (SI4012_IRQ, SFR_P0, 7);
+  57          SI_SBIT (SDA, SFR_P0, 0);
+  58          SI_SBIT (SCL, SFR_P0, 1);
+  59          
+  60          //-----------------------------------------------------------------------------
+  61          // SiLabs_Startup() Routine
+  62          // ----------------------------------------------------------------------------
+  63          // This function is called immediately after reset, before the initialization
+  64          // code is run in SILABS_STARTUP.A51 (which runs before main() ). This is a
+  65          // useful place to disable the watchdog timer, which is enable by default
+  66          // and may trigger before main() in some instances.
+  67          //-----------------------------------------------------------------------------
+  68          void SiLabs_Startup(void) {
+  69   1      
+  70   1      }
+  71          
+  72          void calc_crc(void) {
+  73   1              uint8_t i, j, crc = 0;
+  74   1      
+  75   1              dbuf[1] = 0xFF;
   76   1      
-  77   1              // Debug trap
-  78   1              while (!SCL)
-  79   1                      ;
-  80   1      
-  81   1              // Call hardware initialization routine
-  82   1              enter_DefaultMode_from_RESET();
-  83   1      
-  84   1              dbuf[0] = 0xAA;
-  85   1              dbuf[1] = 0xFF;
-  86   1              dbuf[2] = UHOME_TYPE;
-  87   1              dbuf[3] = UHOME_ID; // ID
-  88   1              dbuf[4] = 0x00; // Temp1
-  89   1              dbuf[5] = 0x00; // Temp2
-  90   1              dbuf[6] = 0x00; // Bat1
-  91   1              dbuf[7] = 0x00; // Bat2
-  92   1              dbuf[8] = 0x00;
-  93   1              dbuf[9] = 0x00;
-  94   1      
-  95   1              SMB0_reset();
-  96   1              SMB0_init(SMB0_TIMER1, true);
+  77   1              for (i = 0; i < 10; i++) {
+  78   2                      crc ^= dbuf[i];
+  79   2                      for (j = 0; j < 8; j++) {
+  80   3                              if (crc & 0x01) {
+  81   4                                      crc ^= CRC_POLY;
+  82   4                              }
+  83   3      
+  84   3                              crc >>= 1;
+  85   3                      }
+  86   2              }
+  87   1      
+  88   1              dbuf[1] = crc;
+  89   1      }
+  90          
+  91          //-----------------------------------------------------------------------------
+  92          // main() Routine
+  93          // ----------------------------------------------------------------------------
+  94          int main(void) {
+  95   1              uint16_t SI_SEG_XDATA
+  96   1              temp, bat;
   97   1      
-  98   1              // keep this so that the chip can be programmed
-  99   1              for (delayi = 500000; delayi > 0; delayi--)
+  98   1              // Debug trap
+  99   1              while (!SCL)
  100   1                      ;
  101   1      
- 102   1              // enable low power stuff
- 103   1              RTC0CN0_Local = 0xC0;
- 104   1              RTC0CN0_SetBits(RTC0TR + RTC0AEN + ALRM);
- 105   1              LPM_Init();
- 106   1              LPM_Enable_Wakeup (RTC);
- 107   1              RTC_Alarm = 1;
- 108   1      
- 109   1              // enable RF transceiver
- 110   1              SI4012_SDN = 0;
- 111   1      
- 112   1              while (1) {
-C51 COMPILER V9.53.0.0   EFM8SB10F8G_A_QFN20_MAIN                                          01/14/2018 19:16:25 PAGE 3   
+ 102   1              // Call hardware initialization routine
+ 103   1              enter_DefaultMode_from_RESET();
+ 104   1      
+ 105   1              dbuf[0] = 0xAA;
+ 106   1              dbuf[1] = 0xFF;
+ 107   1              dbuf[2] = UHOME_TYPE;
+ 108   1              dbuf[3] = UHOME_ID; // ID
+ 109   1              dbuf[4] = 0x00; // Temp1
+ 110   1              dbuf[5] = 0x00; // Temp2
+ 111   1              dbuf[6] = 0x00; // Bat1
+ 112   1              dbuf[7] = 0x00; // Bat2
+C51 COMPILER V9.53.0.0   EFM8SB10F8G_A_QFN20_MAIN                                          04/10/2018 00:36:51 PAGE 3   
 
- 113   2                      if (RTC_Failure) {
- 114   3                              RTC_Failure = 0;
- 115   3                              while (1) {
- 116   4                                      SCL = !SCL;
- 117   4                              }
- 118   3                      }
- 119   2      
- 120   2                      if (RTC_Alarm) {
- 121   3                              RTC_Alarm = 0;
- 122   3                      }
- 123   2      
- 124   2                      switch (state) {
- 125   3                      case 0:
- 126   3                              SI4012_SDN = 0;
- 127   3      
- 128   3                              si4012_change_state();
- 129   3                              for (delayi = 100000; delayi > 0; delayi--)
- 130   3                                      ;
- 131   3      
- 132   3                              si4012_init();
- 133   3      
- 134   3      #ifdef UHOME_TEMP
+ 113   1              dbuf[8] = 0x00; // Hum1
+ 114   1              dbuf[9] = 0x00; // Hum2
+ 115   1      
+ 116   1              SMB0_reset();
+ 117   1              SMB0_init(SMB0_TIMER1, true);
+ 118   1      
+ 119   1              // keep this so that the chip can be programmed
+ 120   1              for (delayi = 500000; delayi > 0; delayi--)
+ 121   1                      ;
+ 122   1      
+ 123   1              // enable low power stuff
+ 124   1              RTC0CN0_Local = 0xC0;
+ 125   1              RTC0CN0_SetBits(RTC0TR + RTC0AEN + ALRM);
+ 126   1              LPM_Init();
+ 127   1              LPM_Enable_Wakeup (RTC);
+ 128   1              RTC_Alarm = 1;
+ 129   1      
+ 130   1              // enable RF transceiver
+ 131   1              SI4012_SDN = 0;
+ 132   1      
+ 133   1              while (1) {
+ 134   2                      if (RTC_Failure) {
+ 135   3                              RTC_Failure = 0;
+ 136   3                              while (1) {
+ 137   4                                      SCL = !SCL;
+ 138   4                              }
+ 139   3                      }
+ 140   2      
+ 141   2                      if (RTC_Alarm) {
+ 142   3                              RTC_Alarm = 0;
+ 143   3                      }
+ 144   2      
+ 145   2                      switch (state) {
+ 146   3                      case 0:
+ 147   3                              SI4012_SDN = 0;
+ 148   3      
+ 149   3                              si4012_change_state();
+ 150   3                              for (delayi = 100000; delayi > 0; delayi--)
+ 151   3                                      ;
+ 152   3      
+ 153   3                              si4012_init();
+ 154   3      
+ 155   3      #ifdef UHOME_TEMP
                                       si7055_measure();
               
                                       temp = si7055_read();
                                       dbuf[4] = temp & 0xFF;
                                       dbuf[5] = (temp >> 8) & 0xFF;
               #endif
- 141   3      #ifdef UHOME_HUM
- 142   3                              temp = si7006_read_hum();
- 143   3                              dbuf[8] = temp & 0xFF;
- 144   3                              dbuf[9] = (temp >> 8) & 0xFF;
- 145   3      
- 146   3                              bat = si7006_read_temp();
- 147   3                              dbuf[4] = bat & 0xFF;
- 148   3                              dbuf[5] = (bat >> 8) & 0xFF;
- 149   3      #endif
- 150   3      
- 151   3                              bat = si4012_get_battery();
- 152   3                              dbuf[6] = bat & 0xFF;
- 153   3                              dbuf[7] = (bat >> 8) & 0xFF;
- 154   3                              break;
- 155   3      
- 156   3                      case 1:
- 157   3                              si4012_led(1);
- 158   3                              si4012_set_data(dbuf, UHOME_TXLEN);
- 159   3                              si4012_led(0);
- 160   3                              si4012_tx_shutdown();
- 161   3                              break;
- 162   3      
- 163   3                      case 2:
- 164   3                              for (delayi = UHOME_TX_DELAY; delayi > 0; delayi--)
- 165   3                                      ;
+ 162   3      #ifdef UHOME_HUM
+ 163   3                              temp = si7006_read_hum();
+ 164   3                              dbuf[8] = temp & 0xFF;
+ 165   3                              dbuf[9] = (temp >> 8) & 0xFF;
  166   3      
- 167   3                              SMB0_stop();
- 168   3      
- 169   3                              SMB0CF = SMB0CF_ENSMB__DISABLED;
- 170   3                              SDA = 1;
- 171   3                              SCL = 1;
- 172   3      
- 173   3                              SI4012_SDN = 1;
- 174   3      
- 175   3                              LPM (SLEEP);
-C51 COMPILER V9.53.0.0   EFM8SB10F8G_A_QFN20_MAIN                                          01/14/2018 19:16:25 PAGE 4   
+ 167   3                              bat = si7006_read_temp();
+ 168   3                              dbuf[4] = bat & 0xFF;
+ 169   3                              dbuf[5] = (bat >> 8) & 0xFF;
+ 170   3      #endif
+ 171   3      
+ 172   3                              bat = si4012_get_battery();
+ 173   3                              dbuf[6] = bat & 0xFF;
+ 174   3                              dbuf[7] = (bat >> 8) & 0xFF;
+ 175   3      
+C51 COMPILER V9.53.0.0   EFM8SB10F8G_A_QFN20_MAIN                                          04/10/2018 00:36:51 PAGE 4   
 
- 176   3                              SMB0CF |= SMB0CF_SMBCS__TIMER1 | SMB0CF_INH__SLAVE_DISABLED
- 177   3                                              | SMB0CF_ENSMB__ENABLED;
+ 176   3                              calc_crc();
+ 177   3                              break;
  178   3      
- 179   3                              SMB0_reset();
- 180   3                              SMB0_init(SMB0_TIMER1, true);
- 181   3                              break;
- 182   3                      }
- 183   2      
- 184   2                      state++;
- 185   2                      if (state == 3) {
- 186   3                              state = 0;
- 187   3                      }
- 188   2              }
- 189   1      }
- 190          
- 191          // $[Generated Run-time code]
- 192          // [Generated Run-time code]$
- 193          
- 194          // $[SiLabs Startup]
- 195          // [SiLabs Startup]$
- 196          
+ 179   3                      case 1:
+ 180   3                              si4012_led(1);
+ 181   3                              si4012_set_data(dbuf, UHOME_TXLEN);
+ 182   3                              si4012_led(0);
+ 183   3                              si4012_tx_shutdown();
+ 184   3                              break;
+ 185   3      
+ 186   3                      case 2:
+ 187   3                              for (delayi = UHOME_TX_DELAY; delayi > 0; delayi--)
+ 188   3                                      ;
+ 189   3      
+ 190   3                              SMB0_stop();
+ 191   3      
+ 192   3                              SMB0CF = SMB0CF_ENSMB__DISABLED;
+ 193   3                              SDA = 1;
+ 194   3                              SCL = 1;
+ 195   3      
+ 196   3                              SI4012_SDN = 1;
+ 197   3      
+ 198   3                              LPM (SLEEP);
+ 199   3                              SMB0CF |= SMB0CF_SMBCS__TIMER1 | SMB0CF_INH__SLAVE_DISABLED
+ 200   3                                              | SMB0CF_ENSMB__ENABLED;
+ 201   3      
+ 202   3                              SMB0_reset();
+ 203   3                              SMB0_init(SMB0_TIMER1, true);
+ 204   3                              break;
+ 205   3                      }
+ 206   2      
+ 207   2                      state++;
+ 208   2                      if (state == 3) {
+ 209   3                              state = 0;
+ 210   3                      }
+ 211   2              }
+ 212   1      }
+ 213          
+ 214          // $[Generated Run-time code]
+ 215          // [Generated Run-time code]$
+ 216          
+ 217          // $[SiLabs Startup]
+ 218          // [SiLabs Startup]$
+ 219          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    480    ----
+   CODE SIZE        =    533    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     15       4
+   XDATA SIZE       =     16       4
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

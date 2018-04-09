@@ -434,22 +434,15 @@ extern void RTC_0_enter_DefaultMode_from_RESET(void) {
 
 	// $[ALARM2 - RTC Alarm Programmed Value 2]
 	/***********************************************************************
-	 - RTC Alarm Programmed Value 2 = 0x2C
+	 - RTC Alarm Programmed Value 2 = 0x05
 	 ***********************************************************************/
 	RTC0ADR = ALARM2;
-	RTC0DAT = (0x2C << ALARM2_ALARM2__SHIFT);
+	RTC0DAT = (0x05 << ALARM2_ALARM2__SHIFT);
 	while ((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET)
 		;    //Poll Busy Bit
 	// [ALARM2 - RTC Alarm Programmed Value 2]$
 
 	// $[ALARM3 - RTC Alarm Programmed Value 3]
-	/***********************************************************************
-	 - RTC Alarm Programmed Value 3 = 0x01
-	 ***********************************************************************/
-	RTC0ADR = ALARM3;
-	RTC0DAT = (0x01 << ALARM3_ALARM3__SHIFT);
-	while ((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET)
-		;    //Poll Busy Bit
 	// [ALARM3 - RTC Alarm Programmed Value 3]$
 
 	// $[RTC0CN - RTC Control]

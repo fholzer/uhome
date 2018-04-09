@@ -20,7 +20,7 @@
 // $[Generated Includes]
 // [Generated Includes]$
 
-#define UHOME_ID 0x09
+#define UHOME_ID 0xA0
 
 //#define UHOME_TEMP
 #define UHOME_HUM
@@ -46,8 +46,10 @@
 #define UHOME_TX_DELAY 100000
 #endif
 
+#define CRC_POLY 0xb1
+
 uint32_t SI_SEG_XDATA delayi;
-uint8_t SI_SEG_XDATA dbuf[10];
+uint8_t SI_SEG_XDATA dbuf[11];
 uint8_t SI_SEG_XDATA state = 0;
 
 SI_SBIT (SI4012_SDN, SFR_P1, 0);
@@ -65,6 +67,25 @@ SI_SBIT (SCL, SFR_P0, 1);
 //-----------------------------------------------------------------------------
 void SiLabs_Startup(void) {
 
+}
+
+void calc_crc(void) {
+	uint8_t i, j, crc = 0;
+
+	dbuf[1] = 0xFF;
+
+	for (i = 0; i < 10; i++) {
+		crc ^= dbuf[i];
+		for (j = 0; j < 8; j++) {
+			if (crc & 0x01) {
+				crc ^= CRC_POLY;
+			}
+
+			crc >>= 1;
+		}
+	}
+
+	dbuf[1] = crc;
 }
 
 //-----------------------------------------------------------------------------
@@ -89,8 +110,8 @@ int main(void) {
 	dbuf[5] = 0x00; // Temp2
 	dbuf[6] = 0x00; // Bat1
 	dbuf[7] = 0x00; // Bat2
-	dbuf[8] = 0x00;
-	dbuf[9] = 0x00;
+	dbuf[8] = 0x00; // Hum1
+	dbuf[9] = 0x00; // Hum2
 
 	SMB0_reset();
 	SMB0_init(SMB0_TIMER1, true);
@@ -151,6 +172,8 @@ int main(void) {
 			bat = si4012_get_battery();
 			dbuf[6] = bat & 0xFF;
 			dbuf[7] = (bat >> 8) & 0xFF;
+
+			calc_crc();
 			break;
 
 		case 1:

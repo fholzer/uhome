@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 1   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INITDEVICE
@@ -63,7 +63,7 @@ line level    source
   47          extern void PORTS_1_enter_DefaultMode_from_RESET(void) {
   48   1              // $[P1 - Port 1 Pin Latch]
   49   1              // [P1 - Port 1 Pin Latch]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 2   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 2   
 
   50   1      
   51   1              // $[P1MDOUT - Port 1 Output Mode]
@@ -128,7 +128,7 @@ line level    source
  110   1              /***********************************************************************
  111   1               - UART I/O unavailable at Port pin
  112   1               - SPI I/O unavailable at Port pins
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 3   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 3   
 
  113   1               - SMBus 0 I/O routed to Port pins
  114   1               - CP0 unavailable at Port pin
@@ -193,7 +193,7 @@ line level    source
  173   1              // $[P0DRV - Port 0 Drive Strength]
  174   1              // [P0DRV - Port 0 Drive Strength]$
  175   1      
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 4   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 4   
 
  176   1      }
  177          
@@ -258,7 +258,7 @@ line level    source
  236   1              // [PCA0MD - PCA Mode]$
  237   1      
  238   1              // $[PCA0H - PCA Counter/Timer High Byte]
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 5   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 5   
 
  239   1              // [PCA0H - PCA Counter/Timer High Byte]$
  240   1      
@@ -323,7 +323,7 @@ line level    source
  299   1      
  300   1              // $[SMB0CF - SMBus 0 Configuration]
  301   1              /***********************************************************************
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 6   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 6   
 
  302   1               - Timer 1 Overflow
  303   1               - Slave states are inhibited
@@ -388,7 +388,7 @@ line level    source
  362   1      
  363   1              // $[EIP1 - Extended Interrupt Priority 1]
  364   1              // [EIP1 - Extended Interrupt Priority 1]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 7   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 7   
 
  365   1      
  366   1              // $[IE - Interrupt Enable]
@@ -453,7 +453,7 @@ line level    source
  425   1      
  426   1              // $[CAPTURE3 - RTC Timer Capture 3]
  427   1              // [CAPTURE3 - RTC Timer Capture 3]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 8   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 8   
 
  428   1      
  429   1              // $[ALARM0 - RTC Alarm Programmed Value 0]
@@ -464,147 +464,140 @@ line level    source
  434   1      
  435   1              // $[ALARM2 - RTC Alarm Programmed Value 2]
  436   1              /***********************************************************************
- 437   1               - RTC Alarm Programmed Value 2 = 0x2C
+ 437   1               - RTC Alarm Programmed Value 2 = 0x05
  438   1               ***********************************************************************/
  439   1              RTC0ADR = ALARM2;
- 440   1              RTC0DAT = (0x2C << ALARM2_ALARM2__SHIFT);
+ 440   1              RTC0DAT = (0x05 << ALARM2_ALARM2__SHIFT);
  441   1              while ((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET)
  442   1                      ;    //Poll Busy Bit
  443   1              // [ALARM2 - RTC Alarm Programmed Value 2]$
  444   1      
  445   1              // $[ALARM3 - RTC Alarm Programmed Value 3]
- 446   1              /***********************************************************************
- 447   1               - RTC Alarm Programmed Value 3 = 0x01
- 448   1               ***********************************************************************/
- 449   1              RTC0ADR = ALARM3;
- 450   1              RTC0DAT = (0x01 << ALARM3_ALARM3__SHIFT);
- 451   1              while ((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET)
- 452   1                      ;    //Poll Busy Bit
- 453   1              // [ALARM3 - RTC Alarm Programmed Value 3]$
- 454   1      
- 455   1              // $[RTC0CN - RTC Control]
- 456   1              /***********************************************************************
- 457   1               - Enable RTC oscillator
- 458   1               - RTC timer is running
- 459   1               - Enable missing RTC detector
- 460   1               - Enable RTC alarm
- 461   1               - Alarm event flag is set or enable the auto reset function
- 462   1               - Do not start a capture operation
- 463   1               - Do not start a set operation
- 464   1               ***********************************************************************/
- 465   1              RTC0ADR = RTC0CN0;
- 466   1              RTC0DAT = RTC0CN0_RTC0EN__ENABLED | RTC0CN0_RTC0TR__RUN
- 467   1                              | RTC0CN0_MCLKEN__ENABLED | RTC0CN0_RTC0AEN__ENABLED
- 468   1                              | RTC0CN0_ALRM__SET | RTC0CN0_RTC0CAP__NOT_SET
- 469   1                              | RTC0CN0_RTC0SET__NOT_SET;
- 470   1              while ((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET)
- 471   1                      ;    //Poll Busy Bit
- 472   1      
- 473   1              // [RTC0CN - RTC Control]$
- 474   1      
- 475   1              // $[External Oscillator Setup]
- 476   1              // [External Oscillator Setup]$
- 477   1      
- 478   1      }
- 479          
- 480          extern void PMU_0_enter_DefaultMode_from_RESET(void) {
- 481   1              // $[Clock Setup]
+ 446   1              // [ALARM3 - RTC Alarm Programmed Value 3]$
+ 447   1      
+ 448   1              // $[RTC0CN - RTC Control]
+ 449   1              /***********************************************************************
+ 450   1               - Enable RTC oscillator
+ 451   1               - RTC timer is running
+ 452   1               - Enable missing RTC detector
+ 453   1               - Enable RTC alarm
+ 454   1               - Alarm event flag is set or enable the auto reset function
+ 455   1               - Do not start a capture operation
+ 456   1               - Do not start a set operation
+ 457   1               ***********************************************************************/
+ 458   1              RTC0ADR = RTC0CN0;
+ 459   1              RTC0DAT = RTC0CN0_RTC0EN__ENABLED | RTC0CN0_RTC0TR__RUN
+ 460   1                              | RTC0CN0_MCLKEN__ENABLED | RTC0CN0_RTC0AEN__ENABLED
+ 461   1                              | RTC0CN0_ALRM__SET | RTC0CN0_RTC0CAP__NOT_SET
+ 462   1                              | RTC0CN0_RTC0SET__NOT_SET;
+ 463   1              while ((RTC0ADR & RTC0ADR_BUSY__BMASK) == RTC0ADR_BUSY__SET)
+ 464   1                      ;    //Poll Busy Bit
+ 465   1      
+ 466   1              // [RTC0CN - RTC Control]$
+ 467   1      
+ 468   1              // $[External Oscillator Setup]
+ 469   1              // [External Oscillator Setup]$
+ 470   1      
+ 471   1      }
+ 472          
+ 473          extern void PMU_0_enter_DefaultMode_from_RESET(void) {
+ 474   1              // $[Clock Setup]
+ 475   1      
+ 476   1              // We must switch to the LPOSC before going into sleep mode
+ 477   1              // Save the clock settings
+ 478   1              uint8_t CLKSEL_save;
+ 479   1              uint8_t HFO0CN_save;
+ 480   1              CLKSEL_save = CLKSEL;
+ 481   1              HFO0CN_save = HFO0CN;
  482   1      
- 483   1              // We must switch to the LPOSC before going into sleep mode
- 484   1              // Save the clock settings
- 485   1              uint8_t CLKSEL_save;
- 486   1              uint8_t HFO0CN_save;
- 487   1              CLKSEL_save = CLKSEL;
- 488   1              HFO0CN_save = HFO0CN;
- 489   1      
- 490   1              // Switch to the LPOSC divided by 1
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 9   
+ 483   1              // Switch to the LPOSC divided by 1
+ 484   1              CLKSEL = CLKSEL_CLKDIV__SYSCLK_DIV_1 | CLKSEL_CLKSL__LPOSC;
+ 485   1              while (!((CLKSEL & CLKSEL_CLKRDY__BMASK) == CLKSEL_CLKRDY__SET))
+ 486   1                      ;
+ 487   1              HFO0CN &= ~HFO0CN_IOSCEN__BMASK;
+ 488   1      
+ 489   1              // [Clock Setup]$
+ 490   1      
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 9   
 
- 491   1              CLKSEL = CLKSEL_CLKDIV__SYSCLK_DIV_1 | CLKSEL_CLKSL__LPOSC;
- 492   1              while (!((CLKSEL & CLKSEL_CLKRDY__BMASK) == CLKSEL_CLKRDY__SET))
- 493   1                      ;
- 494   1              HFO0CN &= ~HFO0CN_IOSCEN__BMASK;
- 495   1      
- 496   1              // [Clock Setup]$
- 497   1      
- 498   1              // $[PMU0MD - Power Management Unit Mode]
- 499   1              // [PMU0MD - Power Management Unit Mode]$
+ 491   1              // $[PMU0MD - Power Management Unit Mode]
+ 492   1              // [PMU0MD - Power Management Unit Mode]$
+ 493   1      
+ 494   1              // $[PMU0FL - Power Management Unit Flag]
+ 495   1              /***********************************************************************
+ 496   1               - A Capacitive Sensing event did not cause the last wake-up
+ 497   1               ***********************************************************************/
+ 498   1              PMU0FL = PMU0FL_CS0WK__NOT_SET;
+ 499   1              // [PMU0FL - Power Management Unit Flag]$
  500   1      
- 501   1              // $[PMU0FL - Power Management Unit Flag]
- 502   1              /***********************************************************************
- 503   1               - A Capacitive Sensing event did not cause the last wake-up
- 504   1               ***********************************************************************/
- 505   1              PMU0FL = PMU0FL_CS0WK__NOT_SET;
- 506   1              // [PMU0FL - Power Management Unit Flag]$
- 507   1      
- 508   1              // $[PCON0 - Power Control 0]
- 509   1              // [PCON0 - Power Control 0]$
- 510   1      
- 511   1              // $[Clear PMU Wake-up flags]
- 512   1              // [Clear PMU Wake-up flags]$
- 513   1      
- 514   1              // $[PMU0CF - Power Management Unit Configuration]
- 515   1              /***********************************************************************
- 516   1               - Sleep mode not activated
- 517   1               - Suspend mode not activated
- 518   1               - Clear all wake-up flags
- 519   1               - Comparator 0 rising edge did not cause the last wake-up
- 520   1               - A Port Match event did not cause the last wake-up
- 521   1               - A RTC Alarm caused the last wake-up
- 522   1               - An RTC oscillator fail event caused the last wake-up
- 523   1               ***********************************************************************/
- 524   1              PMU0CF = PMU0CF_SLEEP__NORMAL | PMU0CF_SUSPEND__NORMAL
- 525   1                              | PMU0CF_CLEAR__ALL_FLAGS | PMU0CF_CPT0WK__NOT_SET
- 526   1                              | PMU0CF_PMATWK__NOT_SET | PMU0CF_RTCAWK__SET | PMU0CF_RTCFWK__SET;
- 527   1              NOP();
- 528   1              NOP(); // Delay to update wake-up flags
- 529   1              // [PMU0CF - Power Management Unit Configuration]$
- 530   1      
- 531   1              // $[Clock Restore]
- 532   1      
- 533   1              // Restore clock settings
- 534   1              HFO0CN |= (HFO0CN_save & HFO0CN_IOSCEN__BMASK);
- 535   1              CLKSEL = CLKSEL_save;
- 536   1              while (!((CLKSEL & CLKSEL_CLKRDY__BMASK) == CLKSEL_CLKRDY__SET))
- 537   1                      ;
- 538   1      
- 539   1              // [Clock Restore]$
- 540   1      
- 541   1      }
- 542          
- 543          extern void enter_Sleep_from_DefaultMode(void) {
- 544   1      
- 545   1      }
- 546          
- 547          extern void PORTS_1_enter_Sleep_from_DefaultMode(void) {
- 548   1      
- 549   1      }
- 550          
- 551          extern void enter_DefaultMode_from_Sleep(void) {
- 552   1      
- 553   1      }
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/14/2018 19:13:33 PAGE 10  
+ 501   1              // $[PCON0 - Power Control 0]
+ 502   1              // [PCON0 - Power Control 0]$
+ 503   1      
+ 504   1              // $[Clear PMU Wake-up flags]
+ 505   1              // [Clear PMU Wake-up flags]$
+ 506   1      
+ 507   1              // $[PMU0CF - Power Management Unit Configuration]
+ 508   1              /***********************************************************************
+ 509   1               - Sleep mode not activated
+ 510   1               - Suspend mode not activated
+ 511   1               - Clear all wake-up flags
+ 512   1               - Comparator 0 rising edge did not cause the last wake-up
+ 513   1               - A Port Match event did not cause the last wake-up
+ 514   1               - A RTC Alarm caused the last wake-up
+ 515   1               - An RTC oscillator fail event caused the last wake-up
+ 516   1               ***********************************************************************/
+ 517   1              PMU0CF = PMU0CF_SLEEP__NORMAL | PMU0CF_SUSPEND__NORMAL
+ 518   1                              | PMU0CF_CLEAR__ALL_FLAGS | PMU0CF_CPT0WK__NOT_SET
+ 519   1                              | PMU0CF_PMATWK__NOT_SET | PMU0CF_RTCAWK__SET | PMU0CF_RTCFWK__SET;
+ 520   1              NOP();
+ 521   1              NOP(); // Delay to update wake-up flags
+ 522   1              // [PMU0CF - Power Management Unit Configuration]$
+ 523   1      
+ 524   1              // $[Clock Restore]
+ 525   1      
+ 526   1              // Restore clock settings
+ 527   1              HFO0CN |= (HFO0CN_save & HFO0CN_IOSCEN__BMASK);
+ 528   1              CLKSEL = CLKSEL_save;
+ 529   1              while (!((CLKSEL & CLKSEL_CLKRDY__BMASK) == CLKSEL_CLKRDY__SET))
+ 530   1                      ;
+ 531   1      
+ 532   1              // [Clock Restore]$
+ 533   1      
+ 534   1      }
+ 535          
+ 536          extern void enter_Sleep_from_DefaultMode(void) {
+ 537   1      
+ 538   1      }
+ 539          
+ 540          extern void PORTS_1_enter_Sleep_from_DefaultMode(void) {
+ 541   1      
+ 542   1      }
+ 543          
+ 544          extern void enter_DefaultMode_from_Sleep(void) {
+ 545   1      
+ 546   1      }
+ 547          
+ 548          extern void PORTS_1_enter_DefaultMode_from_Sleep(void) {
+ 549   1      
+ 550   1      }
+ 551          
+ 552          extern void VDDMON_0_enter_DefaultMode_from_RESET(void) {
+ 553   1              // $[VDM0CN - VDD Supply Monitor Control]
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        04/09/2018 23:37:23 PAGE 10  
 
- 554          
- 555          extern void PORTS_1_enter_DefaultMode_from_Sleep(void) {
- 556   1      
- 557   1      }
- 558          
- 559          extern void VDDMON_0_enter_DefaultMode_from_RESET(void) {
- 560   1              // $[VDM0CN - VDD Supply Monitor Control]
- 561   1              /***********************************************************************
- 562   1               - Disable the VDD Early Warning interrupt
- 563   1               - Disable the VDD supply monitor
- 564   1               ***********************************************************************/
- 565   1              VDM0CN &= ~(VDM0CN_VDDOKIE__BMASK | VDM0CN_VDMEN__BMASK);
- 566   1              // [VDM0CN - VDD Supply Monitor Control]$
- 567   1      
- 568   1      }
- 569          
+ 554   1              /***********************************************************************
+ 555   1               - Disable the VDD Early Warning interrupt
+ 556   1               - Disable the VDD supply monitor
+ 557   1               ***********************************************************************/
+ 558   1              VDM0CN &= ~(VDM0CN_VDDOKIE__BMASK | VDM0CN_VDMEN__BMASK);
+ 559   1              // [VDM0CN - VDD Supply Monitor Control]$
+ 560   1      
+ 561   1      }
+ 562          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    238    ----
+   CODE SIZE        =    227    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
