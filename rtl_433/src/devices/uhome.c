@@ -162,7 +162,7 @@ static int uhome_callback(bitbuffer_t *bitbuffer) {
         // temperature
         // 2 status bits: 00
         if((bb[5] & 0x03) == 0) {
-            int16_t it = (bb[4]<<8)|bb[5];
+            uint16_t it = (bb[4]<<8)|bb[5];
             temp = (175.72*it)/65536-46.85;
         }
 
@@ -173,7 +173,7 @@ static int uhome_callback(bitbuffer_t *bitbuffer) {
         // humidity
         // 2 status bits: 10
         if((bb[9] & 0x03) == 0x02) {
-            int16_t ih = (bb[8]<<8)|bb[9];
+            uint16_t ih = (bb[8]<<8)|bb[9];
             // zero out status bits
             ih &= 0xFFFC;
             humidity = (125.0*ih)/65536-6.0;
