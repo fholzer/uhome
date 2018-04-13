@@ -57,9 +57,9 @@ static int uhome_callback(bitbuffer_t *bitbuffer) {
     uint16_t brow, row_nbytes;
     uint16_t sensor_id = 0;
     uint8_t msg_type, r_crc, c_crc;
-    double temp = -1.0;
+    double temp;
     double voltage;
-    double humidity = -1.0;
+    double humidity;
     data_t *data;
     int valid = 0;
 
@@ -152,6 +152,8 @@ static int uhome_callback(bitbuffer_t *bitbuffer) {
      * Now that message "envelope" has been validated,
      * start parsing data.
      */
+    temp = -1.0;
+    humidity = -1.0;
     // check the sensor type
     if (bb[2] == 0xAB) {
         // sensor is a temp/hum sensor
